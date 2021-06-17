@@ -2,7 +2,6 @@ package com.orangetalents.desafio.dto.usuario;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.orangetalents.desafio.domain.Usuario;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -30,8 +29,8 @@ public class UsuarioNovoDTO {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date dataNascimento;
 
-    public Usuario toUsuario(BCryptPasswordEncoder bCryptPasswordEncoder) {
-        return new Usuario(nome, cpf, email, dataNascimento, bCryptPasswordEncoder.encode(senha));
+    public Usuario toUsuario() {
+        return new Usuario(nome, cpf, email, dataNascimento, senha);
     }
 
     public String getNome() {

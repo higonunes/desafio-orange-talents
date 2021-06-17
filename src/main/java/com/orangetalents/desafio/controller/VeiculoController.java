@@ -36,13 +36,13 @@ public class VeiculoController {
     }
 
     @GetMapping("/{tipoVeiculo}/marcas/{idmarca}/modelos/{idmodelo}/anos")
-    public ResponseEntity<List<VeiculoObjetoFipeDTO>> getListaAnos(@PathVariable String tipoVeiculo, @PathVariable Long idmarca, @PathVariable String idmodelo) {
+    public ResponseEntity<List<VeiculoObjetoFipeDTO>> getListaAnos(@PathVariable String tipoVeiculo, @PathVariable Long idmarca, @PathVariable Long idmodelo) {
         List<VeiculoObjetoFipeDTO> lista = veiculoService.listaModeloAnos(tipoVeiculo, idmarca, idmodelo);
         return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/{tipoVeiculo}/marcas/{idmarca}/modelos/{idmodelo}/anos/{idano}")
-    public ResponseEntity<VeiculoFipeDTO> getModelo(@PathVariable String tipoVeiculo, @PathVariable Long idmarca, @PathVariable String idmodelo, @PathVariable String idano) {
+    public ResponseEntity<VeiculoFipeDTO> getModelo(@PathVariable String tipoVeiculo, @PathVariable Long idmarca, @PathVariable Long idmodelo, @PathVariable String idano) {
         VeiculoFipeDTO veiculo = veiculoService.getModelo(tipoVeiculo, idmarca, idmodelo, idano);
         return ResponseEntity.ok(veiculo);
     }

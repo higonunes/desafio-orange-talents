@@ -7,13 +7,12 @@ import com.orangetalents.desafio.domain.Veiculo;
 import com.orangetalents.desafio.dto.veiculo.*;
 import com.orangetalents.desafio.exceptions.NaoEncontradoException;
 import com.orangetalents.desafio.repository.VeiculoRepository;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -22,40 +21,40 @@ public class VeiculoService {
     @Autowired
     private VeiculoRepository veiculoRepository;
 
+    @Autowired
+    private FipeApiService fipeApiService;
+
     public List<VeiculoObjetoFipeDTO> listaMarcas(String tipoVeiculo) {
         try {
-            VeiculoObjetoFipeDTO[] listaMarcas = ApiService.apiFipe().getForObject("/" + tipoVeiculo + "/marcas", VeiculoObjetoFipeDTO[].class);
-            return Arrays.asList(listaMarcas);
-        } catch (HttpClientErrorException e) {
+            return fipeApiService.getListaMarcaPorVeiculo(tipoVeiculo);
+        } catch (FeignException e) {
             throw new NaoEncontradoException("Não encontrado");
         }
     }
 
     public VeiculoModeloFipeDTO listaMarcaModelos(String tipoVeiculo, Long idmarca) {
         try {
-            return ApiService.apiFipe().getForObject("/" + tipoVeiculo + "/marcas/" + idmarca + "/modelos", VeiculoModeloFipeDTO.class);
-        } catch (HttpClientErrorException e) {
+            return fipeApiService.getListaMarcaModelos(tipoVeiculo, idmarca);
+        } catch (FeignException e) {
             throw new NaoEncontradoException("Não encontrado");
         }
     }
 
-    public List<VeiculoObjetoFipeDTO> listaModeloAnos(String tipoVeiculo, Long idmarca, String idmodelo) {
+    public List<VeiculoObjetoFipeDTO> listaModeloAnos(String tipoVeiculo, Long idmarca, Long idmodelo) {
         try {
-            VeiculoObjetoFipeDTO[] listaModeloAnos = ApiService.apiFipe().getForObject("/" + tipoVeiculo + "/marcas/" + idmarca + "/modelos/" + idmodelo + "/anos", VeiculoObjetoFipeDTO[].class);
-            return Arrays.asList(listaModeloAnos);
-        } catch (HttpClientErrorException e) {
+            return fipeApiService.getListaModeloAnos(tipoVeiculo, idmarca, idmodelo);
+        } catch (FeignException e) {
             throw new NaoEncontradoException("Não encontrado");
         }
     }
 
-    public VeiculoFipeDTO getModelo(String tipoVeiculo, Long idmarca, String idmodelo, String idano) {
+    public VeiculoFipeDTO getModelo(String tipoVeiculo, Long idmarca, Long idmodelo, String idano) {
         try {
-            final String url = "/" + tipoVeiculo + "/marcas/" + idmarca + "/modelos/" + idmodelo + "/anos/" + idano;
-            Object veiculo = ApiService.apiFipe().getForObject(url, Object.class);
+            Object veiculo = fipeApiService.getModelo(tipoVeiculo, idmarca, idmodelo, idano);
             return new ObjectMapper()
                     .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
                     .convertValue(veiculo, VeiculoFipeDTO.class);
-        } catch (HttpClientErrorException e) {
+        } catch (FeignException e) {
             throw new NaoEncontradoException("Não encontrado");
         }
     }
@@ -75,7 +74,7 @@ public class VeiculoService {
 
     public Page<VeiculoUsuarioDTO> listaVeiculoRodizioAtivo(Pageable pageable) {
         Usuario usuario = LoginService.autenticado();
-        Page<Veiculo> veiculos = veiculoRepository.findByRodizioVeiculo(usuario.getId(), RodizioService.digitosFinaisDia(), pageable);
+        Page<Veiculo> veiculos = veiculoRepository.findByRodizioVeiculo(usuario.getId(), RodizioService.digitosFinaisParaHoje(), pageable);
         return veiculos.map(VeiculoUsuarioDTO::new);
     }
 

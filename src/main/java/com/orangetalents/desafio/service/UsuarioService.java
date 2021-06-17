@@ -20,7 +20,8 @@ public class UsuarioService {
 
     public void inserirUsuario(UsuarioNovoDTO usuarioNovoDTO) {
         verificaEmailCpf(usuarioNovoDTO.getEmail(), usuarioNovoDTO.getCpf());
-        Usuario usuario = usuarioNovoDTO.toUsuario(bCryptPasswordEncoder);
+        Usuario usuario = usuarioNovoDTO.toUsuario();
+        usuario.setHashSenha(bCryptPasswordEncoder.encode(usuarioNovoDTO.getSenha()));
         usuario.addPerfil(Perfil.USUARIO);
         usuarioRepository.save(usuario);
     }

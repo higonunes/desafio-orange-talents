@@ -15,7 +15,7 @@ public class VeiculoUsuarioDTO {
     }
 
     public String getDiaRodizio() {
-        return RodizioService.diaDoRodizio(this.anoModelo).getDescricao();
+        return RodizioService.nomeDiaRodizio(this.anoModelo);
     }
 
     public boolean isRodizioAtivo() {
