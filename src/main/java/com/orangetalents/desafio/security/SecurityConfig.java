@@ -24,6 +24,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     private static final String[] PUBLIC_MATCHERS = {
             "/console/**"
 
@@ -34,10 +40,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/auth",
             "/usuario"
     };
-    @Autowired
-    private TokenService tokenService;
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

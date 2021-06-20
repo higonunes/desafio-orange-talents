@@ -59,11 +59,12 @@ public class VeiculoService {
         }
     }
 
-    public void insert(VeiculoNovoDTO veiculoNovoDTO) {
+    public VeiculoUsuarioDTO insert(VeiculoNovoDTO veiculoNovoDTO) {
         Usuario usuario = LoginService.autenticado();
         Veiculo veiculo = veiculoNovoDTO.toVeiculo();
         veiculo.setUsuario(usuario);
         veiculoRepository.save(veiculo);
+        return new VeiculoUsuarioDTO(veiculo);
     }
 
     public Page<VeiculoUsuarioDTO> listaVeiculoUsuario(Pageable pageable) {
@@ -76,6 +77,13 @@ public class VeiculoService {
         Usuario usuario = LoginService.autenticado();
         Page<Veiculo> veiculos = veiculoRepository.findByRodizioVeiculo(usuario.getId(), RodizioService.digitosFinaisParaHoje(), pageable);
         return veiculos.map(VeiculoUsuarioDTO::new);
+    }
+
+    public VeiculoUsuarioDTO getVeiculo(Long idveiculo) {
+        Veiculo veiculo = veiculoRepository.findById(idveiculo).orElseThrow(
+                () -> new NaoEncontradoException("Veículo não encontrado")
+        );
+        return new VeiculoUsuarioDTO(veiculo);
     }
 
 }

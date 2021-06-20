@@ -8,22 +8,18 @@ import java.util.Locale;
 
 public class RodizioService {
 
-
     public static String nomeDiaRodizio(Integer ano) {
-        int dia = regraRodizio(ano);
-        DateFormatSymbols symbols = new DateFormatSymbols(new Locale("pt", "BR"));
-        String[] dayNames = symbols.getWeekdays();
+        int dia = diaRodizio(ano);
+        String[] dayNames = new DateFormatSymbols(new Locale("pt", "BR")).getWeekdays();
         return dayNames[dia];
     }
 
     public static boolean isDiaRodizio(Integer ano) {
-        Calendar agora = Calendar.getInstance(new Locale("pt", "BR"));
-        return agora.get(Calendar.DAY_OF_WEEK) == regraRodizio(ano);
+        return diaSemanaHoje() == diaRodizio(ano);
     }
 
     public static List<String> digitosFinaisParaHoje() {
-        Calendar agora = Calendar.getInstance(new Locale("pt", "BR"));
-        switch (agora.get(Calendar.DAY_OF_WEEK)) {
+        switch (diaSemanaHoje()) {
             case Calendar.MONDAY:
                 return Arrays.asList("0", "1");
             case Calendar.TUESDAY:
@@ -38,9 +34,12 @@ public class RodizioService {
         return Arrays.asList();
     }
 
-    private static int regraRodizio(Integer ano) {
-        String valorFinalAno = ano.toString().substring(3);
+    private static int diaSemanaHoje() {
+        return Calendar.getInstance(new Locale("pt", "BR")).get(Calendar.DAY_OF_WEEK);
+    }
 
+    private static int diaRodizio(Integer ano) {
+        String valorFinalAno = ano.toString().substring(3);
         switch (valorFinalAno) {
             case "0":
             case "1":

@@ -2,7 +2,9 @@ package com.orangetalents.desafio.service;
 
 import com.orangetalents.desafio.domain.Usuario;
 import com.orangetalents.desafio.dto.usuario.UsuarioNovoDTO;
+import com.orangetalents.desafio.dto.usuario.UsuarioVeicuosDTO;
 import com.orangetalents.desafio.enums.Perfil;
+import com.orangetalents.desafio.exceptions.NaoEncontradoException;
 import com.orangetalents.desafio.exceptions.UsuarioCadastradoException;
 import com.orangetalents.desafio.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +32,12 @@ public class UsuarioService {
         if (usuarioRepository.findByEmailOrCpf(email, cpf).isPresent()) {
             throw new UsuarioCadastradoException("Email ou CPF já cadastrado");
         }
+    }
+
+    public UsuarioVeicuosDTO getUsuario(Long idusuario) {
+        Usuario usuario = usuarioRepository.findById(idusuario).orElseThrow(
+                () -> new NaoEncontradoException("Usuário não encontrado")
+        );
+        return new UsuarioVeicuosDTO(usuario);
     }
 }
