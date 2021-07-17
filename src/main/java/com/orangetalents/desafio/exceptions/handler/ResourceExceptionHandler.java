@@ -17,6 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class ResourceExceptionHandler {
 
+    @ExceptionHandler(UsuarioCadastradoException.class)
+    public ResponseEntity<ErroPadrao> usuarioCadastradoException(UsuarioCadastradoException e, HttpServletRequest request) {
+        ErroPadrao err = new ErroPadrao(System.currentTimeMillis(), "Informações repetidas", e.getLocalizedMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErroPadrao> methodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
         ErroValidacao err = new ErroValidacao(System.currentTimeMillis(), "Erro de validação", "Informe os campos faltantes para concluir a solicitação", request.getRequestURI());
@@ -34,11 +40,6 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
 
-    @ExceptionHandler(UsuarioCadastradoException.class)
-    public ResponseEntity<ErroPadrao> usuarioCadastradoException(UsuarioCadastradoException e, HttpServletRequest request) {
-        ErroPadrao err = new ErroPadrao(System.currentTimeMillis(), "Informações repetidas", e.getLocalizedMessage(), request.getRequestURI());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
-    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErroPadrao> illegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
